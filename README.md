@@ -1,13 +1,13 @@
 # BovaApi SDK для Go
-## BovaApi SDK предоставляет удобный способ интеграции с API BovaTech для работы с p2p и массовыми транзакциями. SDK
-## включает методы для создания и управления транзакциями, а также для создания диспутов.
 
-### Установка
+## Установка
+
 Установите последнюю версию SDK с помощью команды:
 
 ```go get github.com/yourusername/bovaapi```
 
 ## Использование
+
 Создание экземпляра BovaApi
 Для создания экземпляра BovaApi используйте билдера BovaApiBuilder:
 
@@ -23,7 +23,7 @@ import (
 
 func main() {
 sdkBuilder := bovaapi.NewBovaApiBuilder().
-ApiURL("https://bovatech.cc/v1").
+ApiURL("https://google.com").
 Secret("your_api_secret")
 
 	sdk, err := sdkBuilder.Build()
@@ -36,7 +36,9 @@ Secret("your_api_secret")
 ```
 
 ## P2P Транзакции
+
 ### Создание P2P транзакции
+
 ```
 p2pRequest := bovaapi.P2PTransactionRequest{
 UserUUID:         "364dbfc8-ae50-492f-bdd9-748edd84d5c9",
@@ -65,6 +67,7 @@ fmt.Printf("P2P Transaction Response: %+v\n", p2pResponse)
 ```
 
 ### Получение информации о P2P транзакции
+
 ```
 transactionID := "9bb5f95f36e1e40d6b1376ed6ce5048172ebfdb7"
 p2pResponse, err := sdk.P2P.GetP2PTransaction(transactionID)
@@ -76,6 +79,7 @@ fmt.Printf("P2P Transaction Details: %+v\n", p2pResponse)
 ```
 
 ### Отмена P2P транзакции
+
 ```
 cancelResponse, err := sdk.P2P.CancelP2PTransaction(transactionID)
 if err != nil {
@@ -86,6 +90,7 @@ fmt.Printf("Cancel P2P Transaction Response: %+v\n", cancelResponse)
 ```
 
 ### Пометка P2P транзакции как оплаченной
+
 ```
 paidResponse, err := sdk.P2P.MarkP2PTransactionPaid(transactionID)
 if err != nil {
@@ -96,6 +101,7 @@ fmt.Printf("Mark P2P Transaction Paid Response: %+v\n", paidResponse)
 ```
 
 ## Массовые Транзакции
+
 ### Создание массовой транзакции
 
 ```
@@ -119,6 +125,7 @@ fmt.Printf("Mass Transaction Response: %+v\n", massTransactionResponse)
 ```
 
 ### Получение информации о массовой транзакции
+
 ```
 massTransactionID := "mock_transaction_id"
 massTransactionResponse, err := sdk.MassTransaction.GetMassTransaction(massTransactionID)
@@ -127,4 +134,64 @@ if err != nil {
 }
 
 fmt.Printf("Mass Transaction Details: %+v\n", massTransactionResponse)
+```
+
+## Опциональные настройки
+### Логгирование
+
+По умолчанию система создает свой логгер с логами в формате json, логгер логгирует все входящие и исходящие запросы в
+stdout,
+Вы можете создать и настроить свой логгер реализовав интерфейс:
+
+```
+type Logger interface {
+	Enabled() bool
+
+	Debug(msg string)
+	Info(msg string)
+	Warn(msg string)
+	Error(msg string)
+}
+```
+
+где параметр Enabled - отвечает за то, надо ли логгировать запросы и ответы или нет.
+Вашу реализацию необзодимо подложить в NewBovaApiBuilder при сборке:
+
+```
+func main() {
+	sdkBuilder := bovasdk.NewBovaApiBuilder().
+		ApiURL("https://google.com").
+		Secret("your_api_secret").
+		Logger(myCustomLogger)
+	
+
+	sdk, err := sdkBuilder.Build()
+	if err != nil {
+		log.Fatalf("Error building SDK: %v", err)
+	}
+
+	fmt.Println("SDK успешно создан!")
+}
+```
+
+### Клиент для запросов
+
+Кроме того, вы можете полностю передать свою структуру http.Client со своими настройками(включая логгирование, таймауты и т.д.) для
+выполнения запросов
+
+```
+func main() {
+sdkBuilder := bovasdk.NewBovaApiBuilder().
+ApiURL("https://google.com").
+Secret("your_api_secret").
+Client(myCustomCLient)
+
+
+	sdk, err := sdkBuilder.Build()
+	if err != nil {
+		log.Fatalf("Error building SDK: %v", err)
+	}
+
+	fmt.Println("SDK успешно создан!")
+}
 ```
