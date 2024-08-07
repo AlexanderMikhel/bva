@@ -7,7 +7,6 @@ import (
 	"io"
 	"mime/multipart"
 	"net/http"
-	"os"
 	"path/filepath"
 )
 
@@ -143,23 +142,17 @@ func (p2p *P2P) CreateP2PDispute(req P2PDisputeRequest) (*P2PDisputeResponse, er
 	_ = writer.WriteField(transactionIdForm, req.TransactionID)
 	_ = writer.WriteField(p2pDisputeAmountForm, req.Amount)
 
-	file, err := os.Open(req.ProofImage)
+	part, err := writer.CreateFormFile(p2pDisputeProofImageForm, filepath.Base(req.file.Name()))
 	if err != nil {
-		return nil, fmt.Errorf("error opening file: %v", err)
+		return nil, fmt.Errorf("error creating form file with name: %s, err: %v", req.file.Name(), err)
 	}
-	defer file.Close()
-
-	part, err := writer.CreateFormFile(p2pDisputeProofImageForm, filepath.Base(req.ProofImage))
-	if err != nil {
-		return nil, fmt.Errorf("error creating form file: %v", err)
-	}
-	_, err = io.Copy(part, file)
+	defer req.file.Close()
+	_, err = io.Copy(part, req.file)
 	if err != nil {
 		return nil, fmt.Errorf("error copying file: %v", err)
 	}
 
-	err = writer.Close()
-	if err != nil {
+	if err = writer.Close(); err != nil {
 		return nil, fmt.Errorf("error closing writer: %v", err)
 	}
 

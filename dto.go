@@ -1,5 +1,7 @@
 package bovasdk
 
+import "os"
+
 // P2PTransactionRequest представляет тело запроса для создания P2P транзакции.
 type P2PTransactionRequest struct {
 	UserUUID         string `json:"user_uuid"`
@@ -87,7 +89,7 @@ type P2PTransactionResponseShort struct {
 type P2PDisputeRequest struct {
 	TransactionID string
 	Amount        string
-	ProofImage    string
+	file          *os.File
 }
 
 // P2PDisputeResponse представляет тело ответа API для создания диспута по p2p транзакции.
