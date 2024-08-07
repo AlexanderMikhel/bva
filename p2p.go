@@ -142,14 +142,14 @@ func (p2p *P2P) CreateP2PDispute(req P2PDisputeRequest) (*P2PDisputeResponse, er
 	_ = writer.WriteField(transactionIdForm, req.TransactionID)
 	_ = writer.WriteField(p2pDisputeAmountForm, req.Amount)
 
-	part, err := writer.CreateFormFile(p2pDisputeProofImageForm, filepath.Base(req.file.Name()))
+	part, err := writer.CreateFormFile(p2pDisputeProofImageForm, filepath.Base(req.File.Name()))
 	if err != nil {
-		return nil, fmt.Errorf("error creating form file with name: %s, err: %v", req.file.Name(), err)
+		return nil, fmt.Errorf("error creating form File with name: %s, err: %v", req.File.Name(), err)
 	}
-	defer req.file.Close()
-	_, err = io.Copy(part, req.file)
+	defer req.File.Close()
+	_, err = io.Copy(part, req.File)
 	if err != nil {
-		return nil, fmt.Errorf("error copying file: %v", err)
+		return nil, fmt.Errorf("error copying File: %v", err)
 	}
 
 	if err = writer.Close(); err != nil {
