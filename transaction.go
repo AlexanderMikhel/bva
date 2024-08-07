@@ -24,7 +24,7 @@ func (mt *MassTransaction) CreateMassTransaction(req MassTransactionRequest) (*M
 		return nil, fmt.Errorf("error marshaling request: %v", err)
 	}
 
-	httpReq, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/mass_transactions", mt.apiURL), bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/v1/mass_transactions", mt.apiURL), bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}
@@ -52,7 +52,7 @@ func (mt *MassTransaction) CreateMassTransaction(req MassTransactionRequest) (*M
 
 // GetMassTransaction получает информацию о транзакции по её ID.
 func (mt *MassTransaction) GetMassTransaction(transactionID string) (*MassTransactionResponse, error) {
-	url := fmt.Sprintf("%s/mass_transactions/%s", mt.apiURL, transactionID)
+	url := fmt.Sprintf("%s/v1/mass_transactions/%s", mt.apiURL, transactionID)
 	httpReq, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)

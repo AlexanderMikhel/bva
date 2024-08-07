@@ -28,7 +28,7 @@ func (p2p *P2P) CreateP2PTransaction(req P2PTransactionRequest) (*P2PTransaction
 	}
 
 	// Создаем HTTP запрос
-	httpReq, err := http.NewRequest(http.MethodPost, p2p.apiURL, bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequest(http.MethodPost, p2p.apiURL+"/v1/p2p_transactions", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}
@@ -58,7 +58,7 @@ func (p2p *P2P) CreateP2PTransaction(req P2PTransactionRequest) (*P2PTransaction
 }
 
 func (p2p *P2P) MarkP2PTransactionPaid(transactionID string) (*P2PTransactionResponseShort, error) {
-	url := fmt.Sprintf("%s/p2p_transactions/%s/paid", p2p.apiURL, transactionID)
+	url := fmt.Sprintf("%s/v1/p2p_transactions/%s/paid", p2p.apiURL, transactionID)
 	httpReq, err := http.NewRequest(http.MethodPut, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
@@ -84,7 +84,7 @@ func (p2p *P2P) MarkP2PTransactionPaid(transactionID string) (*P2PTransactionRes
 
 // CancelP2PTransaction отменяет p2p транзакцию по её ID.
 func (p2p *P2P) CancelP2PTransaction(transactionID string) (*P2PTransactionResponseShort, error) {
-	url := fmt.Sprintf("%s/p2p_transactions/%s/cancel", p2p.apiURL, transactionID)
+	url := fmt.Sprintf("%s/v1/p2p_transactions/%s/cancel", p2p.apiURL, transactionID)
 	httpReq, err := http.NewRequest(http.MethodPut, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
@@ -110,7 +110,7 @@ func (p2p *P2P) CancelP2PTransaction(transactionID string) (*P2PTransactionRespo
 
 // GetP2PTransaction получает информацию о p2p транзакции по её ID.
 func (p2p *P2P) GetP2PTransaction(transactionID string) (*P2PTransactionResponse, error) {
-	url := fmt.Sprintf("%s/p2p_transactions/%s", p2p.apiURL, transactionID)
+	url := fmt.Sprintf("%s/v1/p2p_transactions/%s", p2p.apiURL, transactionID)
 	httpReq, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
@@ -156,7 +156,7 @@ func (p2p *P2P) CreateP2PDispute(req P2PDisputeRequest) (*P2PDisputeResponse, er
 		return nil, fmt.Errorf("error closing writer: %v", err)
 	}
 
-	httpReq, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/p2p_disputes/from_client", p2p.apiURL), body)
+	httpReq, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/v1/p2p_disputes/from_client", p2p.apiURL), body)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}
