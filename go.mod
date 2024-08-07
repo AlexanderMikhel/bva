@@ -1,4 +1,4 @@
-module bva
+module github.com/AlexanderMikhel/bva
 
 go 1.21.5
 
