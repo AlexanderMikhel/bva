@@ -1,13 +1,13 @@
-BovaApi SDK для Go
-BovaApi SDK предоставляет удобный способ интеграции с API BovaTech для работы с p2p и массовыми транзакциями. SDK
-включает методы для создания и управления транзакциями, а также для создания диспутов.
+#BovaApi SDK для Go
+##BovaApi SDK предоставляет удобный способ интеграции с API BovaTech для работы с p2p и массовыми транзакциями. SDK
+##включает методы для создания и управления транзакциями, а также для создания диспутов.
 
-Установка
+###Установка
 Установите последнюю версию SDK с помощью команды:
 
 ```go get github.com/yourusername/bovaapi```
 
-Использование
+###Использование
 Создание экземпляра BovaApi
 Для создания экземпляра BovaApi используйте билдера BovaApiBuilder:
 
@@ -35,8 +35,8 @@ Secret("your_api_secret")
 }
 ```
 
-P2P Транзакции
-Создание P2P транзакции
+##P2P Транзакции
+###Создание P2P транзакции
 ```
 p2pRequest := bovaapi.P2PTransactionRequest{
 UserUUID:         "364dbfc8-ae50-492f-bdd9-748edd84d5c9",
@@ -64,7 +64,7 @@ log.Fatalf("Error creating P2P transaction: %v", err)
 fmt.Printf("P2P Transaction Response: %+v\n", p2pResponse)
 ```
 
-Получение информации о P2P транзакции
+###Получение информации о P2P транзакции
 ```
 transactionID := "9bb5f95f36e1e40d6b1376ed6ce5048172ebfdb7"
 p2pResponse, err := sdk.P2P.GetP2PTransaction(transactionID)
@@ -75,7 +75,7 @@ log.Fatalf("Error getting P2P transaction: %v", err)
 fmt.Printf("P2P Transaction Details: %+v\n", p2pResponse)
 ```
 
-Отмена P2P транзакции
+###Отмена P2P транзакции
 ```
 cancelResponse, err := sdk.P2P.CancelP2PTransaction(transactionID)
 if err != nil {
@@ -85,7 +85,7 @@ log.Fatalf("Error canceling P2P transaction: %v", err)
 fmt.Printf("Cancel P2P Transaction Response: %+v\n", cancelResponse)
 ```
 
-Пометка P2P транзакции как оплаченной
+###Пометка P2P транзакции как оплаченной
 ```
 paidResponse, err := sdk.P2P.MarkP2PTransactionPaid(transactionID)
 if err != nil {
@@ -95,8 +95,8 @@ log.Fatalf("Error marking P2P transaction as paid: %v", err)
 fmt.Printf("Mark P2P Transaction Paid Response: %+v\n", paidResponse)
 ```
 
-Массовые Транзакции
-Создание массовой транзакции
+##Массовые Транзакции
+###Создание массовой транзакции
 
 ```
 massTransactionRequest := bovaapi.MassTransactionRequest{
@@ -118,7 +118,7 @@ log.Fatalf("Error creating mass transaction: %v", err)
 fmt.Printf("Mass Transaction Response: %+v\n", massTransactionResponse)
 ```
 
-Получение информации о массовой транзакции
+###Получение информации о массовой транзакции
 ```
 massTransactionID := "mock_transaction_id"
 massTransactionResponse, err := sdk.MassTransaction.GetMassTransaction(massTransactionID)
