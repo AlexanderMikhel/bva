@@ -1,6 +1,8 @@
 package bovasdk
 
-import "os"
+import (
+	"io"
+)
 
 // P2PTransactionRequest представляет тело запроса для создания P2P транзакции.
 type P2PTransactionRequest struct {
@@ -86,10 +88,16 @@ type P2PTransactionResponseShort struct {
 }
 
 // P2PDisputeRequest представляет тело запроса для создания диспута по p2p транзакции.
+type FileData interface {
+	io.Reader     // Чтение содержимого файла
+	Name() string // Получение имени файла
+	Close() error // Закрытие файла, если требуется
+}
+
 type P2PDisputeRequest struct {
 	TransactionID string
 	Amount        string
-	File          *os.File
+	File          FileData
 }
 
 // P2PDisputeResponse представляет тело ответа API для создания диспута по p2p транзакции.
