@@ -57,7 +57,7 @@ func (p2p *P2P) CreateP2PTransaction(req P2PTransactionRequest) (*P2PTransaction
 	return &response, nil
 }
 
-func (p2p *P2P) MarkP2PTransactionPaid(transactionID string) (*P2PTransactionResponseShort, error) {
+func (p2p *P2P) MarkP2PTransactionPaid(transactionID string) (*P2PTransactionResponse, error) {
 	url := fmt.Sprintf("%s/v1/p2p_transactions/%s/paid", p2p.apiURL, transactionID)
 	httpReq, err := http.NewRequest(http.MethodPut, url, nil)
 	if err != nil {
@@ -74,7 +74,7 @@ func (p2p *P2P) MarkP2PTransactionPaid(transactionID string) (*P2PTransactionRes
 		return nil, fmt.Errorf("received non-200 response code: %v", resp.StatusCode)
 	}
 
-	var response P2PTransactionResponseShort
+	var response P2PTransactionResponse
 	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return nil, fmt.Errorf("error decoding response: %v", err)
 	}
@@ -83,7 +83,7 @@ func (p2p *P2P) MarkP2PTransactionPaid(transactionID string) (*P2PTransactionRes
 }
 
 // CancelP2PTransaction отменяет p2p транзакцию по её ID.
-func (p2p *P2P) CancelP2PTransaction(transactionID string) (*P2PTransactionResponseShort, error) {
+func (p2p *P2P) CancelP2PTransaction(transactionID string) (*P2PTransactionResponse, error) {
 	url := fmt.Sprintf("%s/v1/p2p_transactions/%s/cancel", p2p.apiURL, transactionID)
 	httpReq, err := http.NewRequest(http.MethodPut, url, nil)
 	if err != nil {
@@ -100,7 +100,7 @@ func (p2p *P2P) CancelP2PTransaction(transactionID string) (*P2PTransactionRespo
 		return nil, fmt.Errorf("received non-200 response code: %v", resp.StatusCode)
 	}
 
-	var response P2PTransactionResponseShort
+	var response P2PTransactionResponse
 	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
 		return nil, fmt.Errorf("error decoding response: %v", err)
 	}
@@ -142,14 +142,24 @@ func (p2p *P2P) CreateP2PDispute(req P2PDisputeRequest) (*P2PDisputeResponse, er
 	_ = writer.WriteField(transactionIdForm, req.TransactionID)
 	_ = writer.WriteField(p2pDisputeAmountForm, req.Amount)
 
-	part, err := writer.CreateFormFile(p2pDisputeProofImageForm, filepath.Base(req.File.Name))
+	part, err := writer.CreateFormFile(p2pDisputeProofImageForm, filepath.Base(req.ProofImage.Name))
 	if err != nil {
-		return nil, fmt.Errorf("error creating form File with name: %s, err: %v", req.File.Name, err)
+		return nil, fmt.Errorf("error creating form File with name: %s, err: %v", req.ProofImage.Name, err)
 	}
-	defer req.File.Close()
-	_, err = io.Copy(part, req.File)
-	if err != nil {
+	defer req.ProofImage.file.Close()
+	if _, err = io.Copy(part, req.ProofImage.file); err != nil {
 		return nil, fmt.Errorf("error copying File: %v", err)
+	}
+	if req.ProofImage2 != nil {
+
+		part2, err := writer.CreateFormFile(p2pDisputeProofImageForm2, filepath.Base(req.ProofImage2.Name))
+		if err != nil {
+			return nil, fmt.Errorf("error creating form File2 with name: %s, err: %v", req.ProofImage2.Name, err)
+		}
+		defer req.ProofImage2.file.Close()
+		if _, err = io.Copy(part2, req.ProofImage2.file); err != nil {
+			return nil, fmt.Errorf("error copying File2: %v", err)
+		}
 	}
 
 	if err = writer.Close(); err != nil {

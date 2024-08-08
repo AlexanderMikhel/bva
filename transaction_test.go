@@ -11,13 +11,11 @@ import (
 var (
 	mockMassTransactionRequest = MassTransactionRequest{
 		UserUUID:      "mock_user_uuid",
-		ToCard:        "4111111111111111",
 		Amount:        100,
 		CallbackURL:   "https://example.com/callback",
 		MerchantID:    "mock_merchant_id",
 		Currency:      "USD",
 		PaymentMethod: "card",
-		Lifetime:      3600,
 	}
 	mockMassTransactionResponse = MassTransactionResponse{
 		ResultCode: "ok",

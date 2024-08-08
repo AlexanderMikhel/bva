@@ -19,42 +19,38 @@ var (
 	mockP2PTransactionRequest = P2PTransactionRequest{
 		UserUUID:         "mock_user_uuid",
 		MerchantID:       "mock_merchant_id",
-		BankName:         "mock_bank",
 		Amount:           100,
 		CallbackURL:      "https://example.com/callback",
 		RedirectURL:      "https://example.com/redirect",
-		Email:            "test@example.com",
-		CustomerName:     "Test Customer",
 		Currency:         "USD",
 		PayeerIdentifier: "mock_identifier",
 		PayeerIP:         "127.0.0.1",
-		PayeerCardNumber: "1234567812345678",
 		PayeerType:       "trust",
-		Lifetime:         3600,
 		PaymentMethod:    "card",
 	}
+
 	mockP2PTransactionResponse = P2PTransactionResponse{
 		ResultCode: "ok",
 		Payload: struct {
-			ID                string `json:"id"`
-			MerchantID        string `json:"merchant_id"`
-			Currency          string `json:"currency"`
-			FormURL           string `json:"form_url"`
-			State             string `json:"state"`
-			CreatedAt         string `json:"created_at"`
-			UpdatedAt         string `json:"updated_at"`
-			CloseAt           string `json:"close_at"`
-			CallbackURL       string `json:"callback_url"`
-			RedirectURL       string `json:"redirect_url"`
-			Email             string `json:"email"`
-			CustomerName      string `json:"customer_name"`
-			Rate              string `json:"rate"`
-			Amount            string `json:"amount"`
-			FiatAmount        string `json:"fiat_amount"`
-			OldFiatAmount     string `json:"old_fiat_amount"`
-			ServiceCommission string `json:"service_commission"`
-			TotalAmount       string `json:"total_amount"`
-			PaymentMethod     string `json:"payment_method"`
+			ID                string               `json:"id"`
+			MerchantID        string               `json:"merchant_id"`
+			Currency          CurrencyEnum         `json:"currency"`
+			FormURL           string               `json:"form_url"`
+			State             TransactionStateEnum `json:"state"`
+			CreatedAt         string               `json:"created_at"`
+			UpdatedAt         string               `json:"updated_at"`
+			CloseAt           string               `json:"close_at"`
+			CallbackURL       string               `json:"callback_url"`
+			RedirectURL       string               `json:"redirect_url"`
+			Email             string               `json:"email"`
+			CustomerName      string               `json:"customer_name"`
+			Rate              string               `json:"rate"`
+			Amount            string               `json:"amount"`
+			FiatAmount        string               `json:"fiat_amount"`
+			OldFiatAmount     string               `json:"old_fiat_amount"`
+			ServiceCommission string               `json:"service_commission"`
+			TotalAmount       string               `json:"total_amount"`
+			PaymentMethod     PaymentMethodEnum    `json:"payment_method"`
 			RecipientCard     struct {
 				ID            string   `json:"id"`
 				Number        string   `json:"number"`
@@ -71,9 +67,9 @@ var (
 		}{
 			ID:                "mock_id",
 			MerchantID:        "mock_merchant_id",
-			Currency:          "USD",
+			Currency:          UZS,
 			FormURL:           "https://example.com/form",
-			State:             "created",
+			State:             Successed,
 			CreatedAt:         "2023-01-01T00:00:00Z",
 			UpdatedAt:         "2023-01-01T00:00:00Z",
 			CloseAt:           "2023-01-01T01:00:00Z",
@@ -87,7 +83,7 @@ var (
 			OldFiatAmount:     "100.0",
 			ServiceCommission: "1.0",
 			TotalAmount:       "99.0",
-			PaymentMethod:     "card",
+			PaymentMethod:     Card,
 			RecipientCard: struct {
 				ID            string   `json:"id"`
 				Number        string   `json:"number"`
@@ -112,56 +108,6 @@ var (
 				UpdatedAt:     "2023-01-01T00:00:00Z",
 				CreatedAt:     "2023-01-01T00:00:00Z",
 				SberpayURL:    "https://example.com/sberpay",
-			},
-		},
-	}
-	mockP2PTransactionResponseShort = P2PTransactionResponseShort{
-		ResultCode: "ok",
-		Payload: struct {
-			ID            string `json:"id"`
-			MerchantID    string `json:"merchant_id"`
-			Amount        string `json:"amount"`
-			OldAmount     string `json:"old_amount"`
-			FormURL       string `json:"form_url"`
-			State         string `json:"state"`
-			CreatedAt     string `json:"created_at"`
-			UpdatedAt     string `json:"updated_at"`
-			CallbackURL   string `json:"callback_url"`
-			RecipientCard struct {
-				ID         int      `json:"id"`
-				Number     string   `json:"number"`
-				BankName   string   `json:"bank_name"`
-				BankColors struct{} `json:"bank_colors"`
-				Brand      string   `json:"brand"`
-				UpdatedAt  string   `json:"updated_at"`
-				CreatedAt  string   `json:"created_at"`
-			} `json:"resipient_card"`
-		}{
-			ID:          "mock_id",
-			MerchantID:  "mock_merchant_id",
-			Amount:      "100.0",
-			OldAmount:   "100.0",
-			FormURL:     "https://example.com/form",
-			State:       "paid",
-			CreatedAt:   "2023-01-01T00:00:00Z",
-			UpdatedAt:   "2023-01-01T00:00:00Z",
-			CallbackURL: "https://example.com/callback",
-			RecipientCard: struct {
-				ID         int      `json:"id"`
-				Number     string   `json:"number"`
-				BankName   string   `json:"bank_name"`
-				BankColors struct{} `json:"bank_colors"`
-				Brand      string   `json:"brand"`
-				UpdatedAt  string   `json:"updated_at"`
-				CreatedAt  string   `json:"created_at"`
-			}{
-				ID:         1,
-				Number:     "123456******5678",
-				BankName:   "Mock Bank",
-				BankColors: struct{}{},
-				Brand:      "visa",
-				UpdatedAt:  "2023-01-01T00:00:00Z",
-				CreatedAt:  "2023-01-01T00:00:00Z",
 			},
 		},
 	}
@@ -208,7 +154,7 @@ func TestCreateP2PTransaction_Error(t *testing.T) {
 
 // TestMarkP2PTransactionPaid tests the MarkP2PTransactionPaid method
 func TestMarkP2PTransactionPaid(t *testing.T) {
-	server := createMockServerP2P(t, http.StatusOK, mockP2PTransactionResponseShort)
+	server := createMockServerP2P(t, http.StatusOK, mockP2PTransactionResponse)
 	defer server.Close()
 
 	p2p := p2pNew(server.URL, apiSecret, server.Client())
@@ -217,8 +163,8 @@ func TestMarkP2PTransactionPaid(t *testing.T) {
 		t.Fatalf("MarkP2PTransactionPaid() error = %v", err)
 	}
 
-	if resp.ResultCode != mockP2PTransactionResponseShort.ResultCode {
-		t.Errorf("MarkP2PTransactionPaid() ResultCode = %v, want %v", resp.ResultCode, mockP2PTransactionResponseShort.ResultCode)
+	if resp.ResultCode != mockP2PTransactionResponse.ResultCode {
+		t.Errorf("MarkP2PTransactionPaid() ResultCode = %v, want %v", resp.ResultCode, mockP2PTransactionResponse.ResultCode)
 	}
 }
 
@@ -236,7 +182,7 @@ func TestMarkP2PTransactionPaid_Error(t *testing.T) {
 
 // TestCancelP2PTransaction tests the CancelP2PTransaction method
 func TestCancelP2PTransaction(t *testing.T) {
-	server := createMockServerP2P(t, http.StatusOK, mockP2PTransactionResponseShort)
+	server := createMockServerP2P(t, http.StatusOK, mockP2PTransactionResponse)
 	defer server.Close()
 
 	p2p := p2pNew(server.URL, apiSecret, server.Client())
@@ -245,8 +191,8 @@ func TestCancelP2PTransaction(t *testing.T) {
 		t.Fatalf("CancelP2PTransaction() error = %v", err)
 	}
 
-	if resp.ResultCode != mockP2PTransactionResponseShort.ResultCode {
-		t.Errorf("CancelP2PTransaction() ResultCode = %v, want %v", resp.ResultCode, mockP2PTransactionResponseShort.ResultCode)
+	if resp.ResultCode != mockP2PTransactionResponse.ResultCode {
+		t.Errorf("CancelP2PTransaction() ResultCode = %v, want %v", resp.ResultCode, mockP2PTransactionResponse.ResultCode)
 	}
 }
 
@@ -308,12 +254,7 @@ func TestCreateP2PDispute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mockP2PDisputeRequest := P2PDisputeRequest{
-		TransactionID: "mock_transaction_id",
-		Amount:        "1000",
-		ProofImage:    tmpfile.Name(),
-	}
-
+	mockP2PDisputeRequest := NewP2PDisputeRequest("mock_transaction_id", "1000", "test", tmpfile)
 	server := createMockServerP2P(t, http.StatusOK, P2PDisputeResponse{
 		ID:               1,
 		State:            "opened",
@@ -324,7 +265,7 @@ func TestCreateP2PDispute(t *testing.T) {
 	defer server.Close()
 
 	p2p := p2pNew(server.URL, apiSecret, server.Client())
-	resp, err := p2p.CreateP2PDispute(mockP2PDisputeRequest)
+	resp, err := p2p.CreateP2PDispute(*mockP2PDisputeRequest)
 	if err != nil {
 		t.Fatalf("CreateP2PDispute() error = %v", err)
 	}
@@ -352,17 +293,18 @@ func TestCreateP2PDispute_Error(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mockP2PDisputeRequest := P2PDisputeRequest{
-		TransactionID: "mock_transaction_id",
-		Amount:        "1000",
-		ProofImage:    tmpfile.Name(),
-	}
-
-	server := createMockServerP2P(t, http.StatusBadRequest, nil)
+	mockP2PDisputeRequest := NewP2PDisputeRequest("mock_transaction_id", "1000", "test", tmpfile)
+	server := createMockServerP2P(t, http.StatusOK, P2PDisputeResponse{
+		ID:               1,
+		State:            "opened",
+		ProofImage:       "https://example.com/proof_image.jpg",
+		P2PTransactionID: "mock_transaction_id",
+		Amount:           1000,
+	})
 	defer server.Close()
 
 	p2p := p2pNew(server.URL, apiSecret, server.Client())
-	_, err = p2p.CreateP2PDispute(mockP2PDisputeRequest)
+	_, err = p2p.CreateP2PDispute(*mockP2PDisputeRequest)
 	if err == nil {
 		t.Fatalf("CreateP2PDispute() expected error, got nil")
 	}
