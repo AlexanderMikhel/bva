@@ -113,6 +113,12 @@ func NewP2PDisputeRequest(TransactionID, Amount, fileName string, file multipart
 	return &P2PDisputeRequest{TransactionID: TransactionID, Amount: Amount, ProofImage: sdkFile{Name: fileName, file: file}}
 }
 
+// WithEmail задает email и возвращает обновленный запрос
+func (p *P2PDisputeRequest) WithProofImage2(fileName string, file multipart.File) *P2PDisputeRequest {
+	p.ProofImage2 = &sdkFile{file: file, Name: fileName}
+	return p
+}
+
 // P2PDisputeResponse представляет тело ответа API для создания диспута по p2p транзакции.
 type P2PDisputeResponse struct {
 	ID               int    `json:"id"`
