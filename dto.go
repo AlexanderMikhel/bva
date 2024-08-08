@@ -90,14 +90,22 @@ type P2PTransactionResponseShort struct {
 // P2PDisputeRequest представляет тело запроса для создания диспута по p2p транзакции.
 type FileData interface {
 	io.Reader     // Чтение содержимого файла
-	Name() string // Получение имени файла
 	Close() error // Закрытие файла, если требуется
+}
+
+type SdkFile struct {
+	FileData
+	Name string
 }
 
 type P2PDisputeRequest struct {
 	TransactionID string
 	Amount        string
-	File          FileData
+	File          SdkFile
+}
+
+func NewP2PDisputeRequest(TransactionID, Amount string, file SdkFile) *P2PDisputeRequest {
+	return &P2PDisputeRequest{TransactionID: TransactionID, Amount: Amount, File: file}
 }
 
 // P2PDisputeResponse представляет тело ответа API для создания диспута по p2p транзакции.
