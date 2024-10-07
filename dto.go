@@ -141,6 +141,7 @@ type P2PDisputeResponse struct {
 	} `json:"resipient_card"`
 }
 
+// test
 // MassTransactionRequest представляет тело запроса для создания массовой транзакции.
 type MassTransactionRequest struct {
 	UserUUID      string            `json:"user_uuid"`
