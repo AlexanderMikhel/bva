@@ -254,7 +254,7 @@ func TestCreateP2PDispute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mockP2PDisputeRequest := NewP2PDisputeRequest("mock_transaction_id", "1000", "test", tmpfile)
+	mockP2PDisputeRequest := NewP2PDisputeRequest("mock_transaction_id", "1000", 1000, tmpfile)
 	server := createMockServerP2P(t, http.StatusOK, P2PDisputeResponse{
 		ID:               1,
 		State:            "opened",
@@ -293,7 +293,7 @@ func TestCreateP2PDispute_Error(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mockP2PDisputeRequest := NewP2PDisputeRequest("mock_transaction_id", "1000", "test", tmpfile)
+	mockP2PDisputeRequest := NewP2PDisputeRequest("mock_transaction_id", "1000", 1000, tmpfile)
 	server := createMockServerP2P(t, http.StatusOK, P2PDisputeResponse{
 		ID:               1,
 		State:            "opened",

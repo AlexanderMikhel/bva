@@ -8,6 +8,7 @@ import (
 	"mime/multipart"
 	"net/http"
 	"path/filepath"
+	"strconv"
 )
 
 type P2P struct {
@@ -140,7 +141,7 @@ func (p2p *P2P) CreateP2PDispute(req P2PDisputeRequest) (*P2PDisputeResponse, er
 	writer := multipart.NewWriter(body)
 
 	_ = writer.WriteField(transactionIdForm, req.TransactionID)
-	_ = writer.WriteField(p2pDisputeAmountForm, req.Amount)
+	_ = writer.WriteField(p2pDisputeAmountForm, strconv.Itoa(req.Amount))
 
 	part, err := writer.CreateFormFile(p2pDisputeProofImageForm, filepath.Base(req.ProofImage.Name))
 	if err != nil {
