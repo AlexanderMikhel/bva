@@ -103,13 +103,13 @@ type sdkFile struct {
 
 type P2PDisputeRequest struct {
 	TransactionID string
-	Amount        string
+	Amount        int
 	ProofImage    sdkFile
 	//not required
 	ProofImage2 *sdkFile
 }
 
-func NewP2PDisputeRequest(TransactionID, Amount, fileName string, file multipart.File) *P2PDisputeRequest {
+func NewP2PDisputeRequest(TransactionID, fileName string, Amount int, file multipart.File) *P2PDisputeRequest {
 	return &P2PDisputeRequest{TransactionID: TransactionID, Amount: Amount, ProofImage: sdkFile{Name: fileName, file: file}}
 }
 
@@ -150,8 +150,8 @@ type MassTransactionRequest struct {
 	Currency      CurrencyEnum      `json:"currency"`
 	PaymentMethod PaymentMethodEnum `json:"payment_method"`
 
-	ToCard      *string `json:"to_card"`
-	SbpBankName *string `json:"sbp_bank_name"`
+	ToCard      *string `json:"to_card,omitempty"`
+	SbpBankName *string `json:"sbp_bank_name,omitempty"`
 }
 
 // NewMassTransactionRequest создает новый экземпляр MassTransactionRequest с обязательными параметрами.
