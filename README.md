@@ -62,21 +62,40 @@ if err != nil {
 }
 ```
 
-### Отмена P2P транзакции
+### Создать спор
 
 ```go
-cancelResponse, err := sdk.P2P.CancelP2PTransaction(transactionID)
-if err != nil {
-    log.Fatalf("Error canceling P2P transaction: %v", err)
+type DisputRequest struct {
+	File          *multipart.FileHeader `form:"file"`
+	SecondFile    *multipart.FileHeader `form:"file"`
+	Amount        intcc                 `form:"amount"`
+	TransactionId string                `form:"transactionId"`
 }
-```
 
-### Пометка P2P транзакции как оплаченной
-
-```go
-paidResponse, err := sdk.P2P.MarkP2PTransactionPaid(transactionID)
-if err != nil {
-    log.Fatalf("Error marking P2P transaction as paid: %v", err)
+func sendDisput(c *gin.Context) {
+	var req DisputRequest
+	if err := c.ShouldBind(&req); err != nil {
+		//обработать ошибку
+	}
+	file, err := req.File.Open()
+	if err != nil {
+		//обработать ошибку
+	}
+	//Второй файл (опционально)
+	secondFile, err := req.File.Open()
+	if err != nil {
+		//обработать ошибку
+	}
+	//Создаем структуру для Диспута
+	mockP2PDisputeRequest := bovasdk.NewP2PDisputeRequest(req.TransactionId, req.Amount, req.File.Filename, file)
+	//Прикрепляем второй файл (опционально)
+	mockP2PDisputeRequest.WithProofImage2(req.SecondFile.Filename, secondFile)
+	//Выполняем запрос
+	resp, err := s.P2P.CreateP2PDispute(context.Background(), mockP2PDisputeRequest)
+	if err != nil {
+		//обработать ошибку
+	}
+	//Бизнес логика
 }
 ```
 
