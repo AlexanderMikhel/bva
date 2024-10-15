@@ -67,7 +67,7 @@ if err != nil {
 ```go
 type DisputRequest struct {
 	File          *multipart.FileHeader `form:"file"`
-	SecondFile    *multipart.FileHeader `form:"file"`
+	SecondFile    *multipart.FileHeader `form:"second_file"`
 	Amount        intcc                 `form:"amount"`
 	TransactionId string                `form:"transactionId"`
 }
@@ -129,6 +129,24 @@ massTransactionResponse, err := sdk.MassTransaction.GetMassTransaction(massTrans
 if err != nil {
     log.Fatalf("Error getting mass transaction: %v", err)
 }
+```
+
+## Кодировка и декодирование
+### Проверка подписи для структуры, пришедешей на апи принимающего callback
+
+```go
+requestBody, err := io.ReadAll(c.Request.Body)
+	if err != nil {
+		//обработать ошибку
+	}
+	//Достаем заголовок Signature
+	signature := c.Request.Header.Get("Signature")
+	//Проверяем валидность заголовка
+	verified := s.Encoder.VerifySignature(requestBody, signature)
+	if !verified {
+		//обработать невалидную сигнатуру
+	}
+	//обработать callback
 ```
 
 ## Опциональные настройки
