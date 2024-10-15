@@ -109,8 +109,8 @@ type P2PDisputeRequest struct {
 	ProofImage2 *sdkFile
 }
 
-func NewP2PDisputeRequest(TransactionID, fileName string, Amount int, file multipart.File) *P2PDisputeRequest {
-	return &P2PDisputeRequest{TransactionID: TransactionID, Amount: Amount, ProofImage: sdkFile{Name: fileName, file: file}}
+func NewP2PDisputeRequest(TransactionID string, Amount int, fileName string, file multipart.File) P2PDisputeRequest {
+	return P2PDisputeRequest{TransactionID: TransactionID, Amount: Amount, ProofImage: sdkFile{Name: fileName, file: file}}
 }
 
 // WithEmail задает email и возвращает обновленный запрос
@@ -121,24 +121,30 @@ func (p *P2PDisputeRequest) WithProofImage2(fileName string, file multipart.File
 
 // P2PDisputeResponse представляет тело ответа API для создания диспута по p2p транзакции.
 type P2PDisputeResponse struct {
-	ID               int    `json:"id"`
-	State            string `json:"state"`
-	ProofImage       string `json:"proof_image"`
-	ProofImage2      string `json:"proof_image2"`
-	P2PTransactionID string `json:"p2p_transaction_id"`
-	Repeated         bool   `json:"repeated"`
-	Amount           int    `json:"amount"`
-	UpdatedAt        string `json:"updated_at"`
-	CreatedAt        string `json:"created_at"`
-	RecipientCard    struct {
-		ID         int      `json:"id"`
-		Number     string   `json:"number"`
-		BankName   string   `json:"bank_name"`
-		BankColors struct{} `json:"bank_colors"`
-		Brand      string   `json:"brand"`
-		UpdatedAt  string   `json:"updated_at"`
-		CreatedAt  string   `json:"created_at"`
-	} `json:"resipient_card"`
+	Data struct {
+		ID               int    `json:"id"`
+		State            string `json:"state"`
+		ProofImage       string `json:"proof_image"`
+		ProofImage2      string `json:"proof_image2"`
+		P2PTransactionID string `json:"p2p_transaction_id"`
+		Repeated         bool   `json:"repeated"`
+		Amount           int    `json:"amount"`
+		UpdatedAt        string `json:"updated_at"`
+		CreatedAt        string `json:"created_at"`
+		RecipientCard    struct {
+			ID         int      `json:"id"`
+			Number     string   `json:"number"`
+			BankName   string   `json:"bank_name"`
+			BankColors struct{} `json:"bank_colors"`
+			Brand      string   `json:"brand"`
+			UpdatedAt  string   `json:"updated_at"`
+			CreatedAt  string   `json:"created_at"`
+		} `json:"resipient_card"`
+	}
+	Message string      `json:"message"`
+	Status  string      `json:"status"`
+	Errors  interface{} `json:"errors"`
+	Meta    interface{} `json:"meta"`
 }
 
 // test
@@ -148,29 +154,24 @@ type MassTransactionRequest struct {
 	MerchantID    string            `json:"merchant_id"`
 	Amount        int               `json:"amount"`
 	CallbackURL   string            `json:"callback_url"`
+	ToCard        string            `json:"to_card"`
 	Currency      CurrencyEnum      `json:"currency"`
 	PaymentMethod PaymentMethodEnum `json:"payment_method"`
 
-	ToCard      *string `json:"to_card,omitempty"`
 	SbpBankName *string `json:"sbp_bank_name,omitempty"`
 }
 
 // NewMassTransactionRequest создает новый экземпляр MassTransactionRequest с обязательными параметрами.
-func NewMassTransactionRequest(userUUID, merchantID, callbackURL string, amount int, currency CurrencyEnum, paymentMethod PaymentMethodEnum) *MassTransactionRequest {
+func NewMassTransactionRequest(userUUID, merchantID, toCard, callbackURL string, amount int, currency CurrencyEnum, paymentMethod PaymentMethodEnum) *MassTransactionRequest {
 	return &MassTransactionRequest{
 		UserUUID:      userUUID,
 		MerchantID:    merchantID,
+		ToCard:        toCard,
 		Amount:        amount,
 		CallbackURL:   callbackURL,
 		Currency:      currency,
 		PaymentMethod: paymentMethod,
 	}
-}
-
-// WithToCard задает карту получателя и возвращает обновленный запрос.
-func (m *MassTransactionRequest) WithToCard(toCard string) *MassTransactionRequest {
-	m.ToCard = &toCard
-	return m
 }
 
 // WithSbpBankName задает название банка для SBP и возвращает обновленный запрос.

@@ -2,35 +2,36 @@ package bovasdk
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"fmt"
 	"net/http"
 )
 
 type MassTransaction struct {
-	apiURL string
-	secret string
-	client *http.Client
+	apiURL  string
+	client  *http.Client
+	encoder *Encoder
 }
 
-func massTransactionNew(apiURL, secret string, client *http.Client) *MassTransaction {
-	return &MassTransaction{apiURL: apiURL, secret: secret, client: client}
+func massTransactionNew(apiURL string, encoder *Encoder, client *http.Client) *MassTransaction {
+	return &MassTransaction{apiURL: apiURL, encoder: encoder, client: client}
 }
 
 // CreateMassTransaction создает заявку на выплату на карту.
-func (mt *MassTransaction) CreateMassTransaction(req MassTransactionRequest) (*MassTransactionResponse, error) {
+func (mt *MassTransaction) CreateMassTransaction(ctx context.Context, req MassTransactionRequest) (*MassTransactionResponse, error) {
 	jsonData, err := json.Marshal(req)
 	if err != nil {
 		return nil, fmt.Errorf("error marshaling request: %v", err)
 	}
 
-	httpReq, err := http.NewRequest(http.MethodPost, fmt.Sprintf("%s/v1/mass_transactions", mt.apiURL), bytes.NewBuffer(jsonData))
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, fmt.Sprintf("%s/v1/mass_transactions", mt.apiURL), bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}
 
 	httpReq.Header.Set("Content-Type", "application/json")
-	httpReq.Header.Set(signatureHeader, calculateSignature(mt.secret, jsonData))
+	httpReq.Header.Set(signatureHeader, mt.encoder.CalculateSignature(jsonData))
 
 	resp, err := mt.client.Do(httpReq)
 	if err != nil {
@@ -39,7 +40,7 @@ func (mt *MassTransaction) CreateMassTransaction(req MassTransactionRequest) (*M
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response code: %v", resp.StatusCode)
+		return nil, fmt.Errorf("mass_transactions api return error with code: %v", resp.StatusCode)
 	}
 
 	var response MassTransactionResponse
@@ -51,9 +52,9 @@ func (mt *MassTransaction) CreateMassTransaction(req MassTransactionRequest) (*M
 }
 
 // GetMassTransaction получает информацию о транзакции по её ID.
-func (mt *MassTransaction) GetMassTransaction(transactionID string) (*MassTransactionResponse, error) {
+func (mt *MassTransaction) GetMassTransaction(ctx context.Context, transactionID string) (*MassTransactionResponse, error) {
 	url := fmt.Sprintf("%s/v1/mass_transactions/%s", mt.apiURL, transactionID)
-	httpReq, err := http.NewRequest(http.MethodGet, url, nil)
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodGet, url, nil)
 	if err != nil {
 		return nil, fmt.Errorf("error creating request: %v", err)
 	}

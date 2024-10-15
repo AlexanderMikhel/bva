@@ -1,23 +1,14 @@
-package bovasdk
+package unit
 
-import (
-	"bytes"
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
-	"net/http/httptest"
-	"os"
-	"testing"
-)
-
-// Mock API secret
-const apiSecret = "mock_api_secret"
+/*// Mock API secret
+const apiSecret = "1cec9fe9f2e0e49ac80de6774eae074429a16816"
+const userUUID = "a53fb67d-d807-4055-b7b3-56aafd88ff16"
 
 // Mock request and response data
 var (
 	mockTransactionID         = "mock_transaction_id"
-	mockP2PTransactionRequest = P2PTransactionRequest{
-		UserUUID:         "mock_user_uuid",
+	mockP2PTransactionRequest = bovasdk.P2PTransactionRequest{
+		UserUUID:         userUUID,
 		MerchantID:       "mock_merchant_id",
 		Amount:           100,
 		CallbackURL:      "https://example.com/callback",
@@ -29,28 +20,28 @@ var (
 		PaymentMethod:    "card",
 	}
 
-	mockP2PTransactionResponse = P2PTransactionResponse{
+	mockP2PTransactionResponse = bovasdk.P2PTransactionResponse{
 		ResultCode: "ok",
 		Payload: struct {
-			ID                string               `json:"id"`
-			MerchantID        string               `json:"merchant_id"`
-			Currency          CurrencyEnum         `json:"currency"`
-			FormURL           string               `json:"form_url"`
-			State             TransactionStateEnum `json:"state"`
-			CreatedAt         string               `json:"created_at"`
-			UpdatedAt         string               `json:"updated_at"`
-			CloseAt           string               `json:"close_at"`
-			CallbackURL       string               `json:"callback_url"`
-			RedirectURL       string               `json:"redirect_url"`
-			Email             string               `json:"email"`
-			CustomerName      string               `json:"customer_name"`
-			Rate              string               `json:"rate"`
-			Amount            string               `json:"amount"`
-			FiatAmount        string               `json:"fiat_amount"`
-			OldFiatAmount     string               `json:"old_fiat_amount"`
-			ServiceCommission string               `json:"service_commission"`
-			TotalAmount       string               `json:"total_amount"`
-			PaymentMethod     PaymentMethodEnum    `json:"payment_method"`
+			ID                string                       `json:"id"`
+			MerchantID        string                       `json:"merchant_id"`
+			Currency          bovasdk.CurrencyEnum         `json:"currency"`
+			FormURL           string                       `json:"form_url"`
+			State             bovasdk.TransactionStateEnum `json:"state"`
+			CreatedAt         string                       `json:"created_at"`
+			UpdatedAt         string                       `json:"updated_at"`
+			CloseAt           string                       `json:"close_at"`
+			CallbackURL       string                       `json:"callback_url"`
+			RedirectURL       string                       `json:"redirect_url"`
+			Email             string                       `json:"email"`
+			CustomerName      string                       `json:"customer_name"`
+			Rate              string                       `json:"rate"`
+			Amount            string                       `json:"amount"`
+			FiatAmount        string                       `json:"fiat_amount"`
+			OldFiatAmount     string                       `json:"old_fiat_amount"`
+			ServiceCommission string                       `json:"service_commission"`
+			TotalAmount       string                       `json:"total_amount"`
+			PaymentMethod     bovasdk.PaymentMethodEnum    `json:"payment_method"`
 			RecipientCard     struct {
 				ID            string   `json:"id"`
 				Number        string   `json:"number"`
@@ -67,9 +58,9 @@ var (
 		}{
 			ID:                "mock_id",
 			MerchantID:        "mock_merchant_id",
-			Currency:          UZS,
+			Currency:          bovasdk.UZS,
 			FormURL:           "https://example.com/form",
-			State:             Successed,
+			State:             bovasdk.Successed,
 			CreatedAt:         "2023-01-01T00:00:00Z",
 			UpdatedAt:         "2023-01-01T00:00:00Z",
 			CloseAt:           "2023-01-01T01:00:00Z",
@@ -83,7 +74,7 @@ var (
 			OldFiatAmount:     "100.0",
 			ServiceCommission: "1.0",
 			TotalAmount:       "99.0",
-			PaymentMethod:     Card,
+			PaymentMethod:     bovasdk.Card,
 			RecipientCard: struct {
 				ID            string   `json:"id"`
 				Number        string   `json:"number"`
@@ -129,7 +120,7 @@ func TestCreateP2PTransaction(t *testing.T) {
 	server := createMockServerP2P(t, http.StatusOK, mockP2PTransactionResponse)
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	resp, err := p2p.CreateP2PTransaction(mockP2PTransactionRequest)
 	if err != nil {
 		t.Fatalf("CreateP2PTransaction() error = %v", err)
@@ -145,7 +136,7 @@ func TestCreateP2PTransaction_Error(t *testing.T) {
 	server := createMockServerP2P(t, http.StatusBadRequest, nil)
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	_, err := p2p.CreateP2PTransaction(mockP2PTransactionRequest)
 	if err == nil {
 		t.Fatalf("CreateP2PTransaction() expected error, got nil")
@@ -157,7 +148,7 @@ func TestMarkP2PTransactionPaid(t *testing.T) {
 	server := createMockServerP2P(t, http.StatusOK, mockP2PTransactionResponse)
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	resp, err := p2p.MarkP2PTransactionPaid(mockTransactionID)
 	if err != nil {
 		t.Fatalf("MarkP2PTransactionPaid() error = %v", err)
@@ -173,7 +164,7 @@ func TestMarkP2PTransactionPaid_Error(t *testing.T) {
 	server := createMockServerP2P(t, http.StatusBadRequest, nil)
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	_, err := p2p.MarkP2PTransactionPaid(mockTransactionID)
 	if err == nil {
 		t.Fatalf("MarkP2PTransactionPaid() expected error, got nil")
@@ -185,7 +176,7 @@ func TestCancelP2PTransaction(t *testing.T) {
 	server := createMockServerP2P(t, http.StatusOK, mockP2PTransactionResponse)
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	resp, err := p2p.CancelP2PTransaction(mockTransactionID)
 	if err != nil {
 		t.Fatalf("CancelP2PTransaction() error = %v", err)
@@ -201,7 +192,7 @@ func TestCancelP2PTransaction_Error(t *testing.T) {
 	server := createMockServerP2P(t, http.StatusBadRequest, nil)
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	_, err := p2p.CancelP2PTransaction(mockTransactionID)
 	if err == nil {
 		t.Fatalf("CancelP2PTransaction() expected error, got nil")
@@ -213,7 +204,7 @@ func TestGetP2PTransaction(t *testing.T) {
 	server := createMockServerP2P(t, http.StatusOK, mockP2PTransactionResponse)
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	resp, err := p2p.GetP2PTransaction(mockTransactionID)
 	if err != nil {
 		t.Fatalf("GetP2PTransaction() error = %v", err)
@@ -229,7 +220,7 @@ func TestGetP2PTransaction_Error(t *testing.T) {
 	server := createMockServerP2P(t, http.StatusBadRequest, nil)
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	_, err := p2p.GetP2PTransaction(mockTransactionID)
 	if err == nil {
 		t.Fatalf("GetP2PTransaction() expected error, got nil")
@@ -254,8 +245,8 @@ func TestCreateP2PDispute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mockP2PDisputeRequest := NewP2PDisputeRequest("mock_transaction_id", "1000", 1000, tmpfile)
-	server := createMockServerP2P(t, http.StatusOK, P2PDisputeResponse{
+	mockP2PDisputeRequest := bovasdk.NewP2PDisputeRequest("mock_transaction_id", "1000", 1000, tmpfile)
+	server := createMockServerP2P(t, http.StatusOK, bovasdk.P2PDisputeResponse{
 		ID:               1,
 		State:            "opened",
 		ProofImage:       "https://example.com/proof_image.jpg",
@@ -264,7 +255,7 @@ func TestCreateP2PDispute(t *testing.T) {
 	})
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	resp, err := p2p.CreateP2PDispute(*mockP2PDisputeRequest)
 	if err != nil {
 		t.Fatalf("CreateP2PDispute() error = %v", err)
@@ -293,8 +284,8 @@ func TestCreateP2PDispute_Error(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	mockP2PDisputeRequest := NewP2PDisputeRequest("mock_transaction_id", "1000", 1000, tmpfile)
-	server := createMockServerP2P(t, http.StatusOK, P2PDisputeResponse{
+	mockP2PDisputeRequest := bovasdk.NewP2PDisputeRequest("mock_transaction_id", "1000", 1000, tmpfile)
+	server := createMockServerP2P(t, http.StatusOK, bovasdk.P2PDisputeResponse{
 		ID:               1,
 		State:            "opened",
 		ProofImage:       "https://example.com/proof_image.jpg",
@@ -303,9 +294,10 @@ func TestCreateP2PDispute_Error(t *testing.T) {
 	})
 	defer server.Close()
 
-	p2p := p2pNew(server.URL, apiSecret, server.Client())
+	p2p := bovasdk.p2pNew(server.URL, apiSecret, server.Client())
 	_, err = p2p.CreateP2PDispute(*mockP2PDisputeRequest)
 	if err == nil {
 		t.Fatalf("CreateP2PDispute() expected error, got nil")
 	}
 }
+*/

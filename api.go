@@ -14,6 +14,7 @@ type BovaApi struct {
 	client          *http.Client
 	P2P             *P2P
 	MassTransaction *MassTransaction
+	Encoder         *Encoder
 }
 
 // BovaApiBuilder помогает построить экземпляр BovaApi.
@@ -80,12 +81,15 @@ func (b *BovaApiBuilder) Build() (*BovaApi, error) {
 		}
 	}
 
+	encoder := NewEncoder(b.secret)
+
 	return &BovaApi{
 		apiURL:          b.apiURL,
 		secret:          b.secret,
 		client:          b.client,
 		logger:          b.logger,
-		P2P:             p2pNew(b.apiURL, b.secret, b.client),
-		MassTransaction: massTransactionNew(b.apiURL, b.secret, b.client),
+		Encoder:         encoder,
+		P2P:             p2pNew(b.apiURL, encoder, b.client),
+		MassTransaction: massTransactionNew(b.apiURL, encoder, b.client),
 	}, nil
 }
