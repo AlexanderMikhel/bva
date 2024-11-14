@@ -28,55 +28,39 @@ if err != nil {
 ### Создание P2P транзакции
 
 ```go
-p2pRequest := bovaapi.P2PTransactionRequest{
-UserUUID:         "364dbfc8-ae50-492f-bdd9-748edd84d5c9",
-MerchantID:       "test7",
-BankName:         "sberbank",
-Amount:           500,
-CallbackURL:      "https://webhook.site/callback",
-RedirectURL:      "https://ya.ru/",
-Email:            "test@mail.ru",
-CustomerName:     "Ivan Vasiliev",
-Currency:         "rub",
-PayeerIdentifier: "payeer_identifier123",
-PayeerIP:         "127.0.0.1",
-PayeerCardNumber: "1234567890123456",
-PayeerType:       "trust",
-Lifetime:         1000,
-PaymentMethod:    "card",
-}
+p2pTransactionRequest := bovasdk.NewP2PTransactionRequest(
+"a53fb67d-d807-4055-b7b3-56aafd88ff16",
+"test1234",
+"someId1",
+"test11",
+"some_type",
+"https://2631-158-160-72-23.ngrok-free.app/response",
+"",
+bovasdk.RUB,
+bovasdk.Card,
+2000,
+)
 
-p2pResponse, err := sdk.P2P.CreateP2PTransaction(p2pRequest)
+//опционально
+p2pTransactionRequest = p2pTransactionRequest.
+WithEmail("email").
+WithCustomerName("customer_name").
+WithPayeerCardNumber("payerCardNumber")
+
+p2prsp, err := sdk.P2P.CreateP2PTransaction(context.Background(), *p2pTransactionRequest)
 if err != nil {
-    log.Fatalf("Error creating P2P transaction: %v", err)
+//обработать ошибку
 }
+//Бизнес логика
 ```
 
 ### Получение информации о P2P транзакции
 
 ```go
-transactionID := "9bb5f95f36e1e40d6b1376ed6ce5048172ebfdb7"
+transactionID := "9bb5f95f36e1e40d6b1376hf6e5048172ebfdb7"
 p2pResponse, err := sdk.P2P.GetP2PTransaction(transactionID)
 if err != nil {
-    log.Fatalf("Error getting P2P transaction: %v", err)
-}
-```
-
-### Отмена P2P транзакции
-
-```go
-cancelResponse, err := sdk.P2P.CancelP2PTransaction(transactionID)
-if err != nil {
-    log.Fatalf("Error canceling P2P transaction: %v", err)
-}
-```
-
-### Пометка P2P транзакции как оплаченной
-
-```go
-paidResponse, err := sdk.P2P.MarkP2PTransactionPaid(transactionID)
-if err != nil {
-    log.Fatalf("Error marking P2P transaction as paid: %v", err)
+//обработать ошибку
 }
 ```
 

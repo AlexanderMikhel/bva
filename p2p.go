@@ -48,7 +48,7 @@ func (p2p *P2P) CreateP2PTransaction(ctx context.Context, req P2PTransactionRequ
 
 	// Обрабатываем ответ
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response code: %v", resp.StatusCode)
+		return nil, fmt.Errorf("received non-200 response code: %v, reason: %v", resp.StatusCode, resp.Body)
 	}
 
 	var response P2PTransactionResponse

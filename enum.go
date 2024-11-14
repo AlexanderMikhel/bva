@@ -12,6 +12,8 @@ func CurrencyFrom(val string) (CurrencyEnum, error) {
 		return RUB, nil
 	case string(UZS):
 		return UZS, nil
+	case string(KRW):
+		return KRW, nil
 	default:
 		return "", fmt.Errorf("invalid currency value: %s", val)
 	}
@@ -25,6 +27,10 @@ func PaymentMethodFrom(val string) (PaymentMethodEnum, error) {
 		return SberPay, nil
 	case string(Sbp):
 		return Sbp, nil
+	case string(SbpFast):
+		return SbpFast, nil
+	case string(AccountNumber):
+		return AccountNumber, nil
 	default:
 		return "", fmt.Errorf("invalid payment method value: %s", val)
 	}
@@ -60,10 +66,13 @@ func TransactionStateFrom(val string) (TransactionStateEnum, error) {
 const (
 	RUB CurrencyEnum = "rub"
 	UZS CurrencyEnum = "uzs"
+	KRW CurrencyEnum = "krw"
 
-	Card    PaymentMethodEnum = "card"
-	SberPay PaymentMethodEnum = "sberpay"
-	Sbp     PaymentMethodEnum = "sbp"
+	Card          PaymentMethodEnum = "card"
+	SberPay       PaymentMethodEnum = "sberpay"
+	Sbp           PaymentMethodEnum = "sbp"
+	SbpFast       PaymentMethodEnum = "sbp_fast"
+	AccountNumber PaymentMethodEnum = "account_number"
 
 	WaitingPayment            TransactionStateEnum = "waiting_payment"
 	Paid                      TransactionStateEnum = "paid"

@@ -14,7 +14,6 @@ var (
 		MerchantID:       getRandMerchantID(),
 		Amount:           2000,
 		CallbackURL:      "https://example.com/callback",
-		RedirectURL:      "https://example.com/redirect",
 		Currency:         RUB,
 		PayeerIdentifier: "mock_identifier",
 		PayeerIP:         "127.0.0.1",
