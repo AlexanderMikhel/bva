@@ -46,14 +46,15 @@ func (p2p *P2P) CreateP2PTransaction(ctx context.Context, req P2PTransactionRequ
 	}
 	defer resp.Body.Close()
 
-	// Обрабатываем ответ
+	respBody, err := io.ReadAll(resp.Body)
+
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response code: %v, reason: %v", resp.StatusCode, resp.Body)
+		return nil, fmt.Errorf("received non-200 response code: %v, reason: %s", resp.StatusCode, string(respBody))
 	}
 
 	var response P2PTransactionResponse
-	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, fmt.Errorf("error decoding response: %v", err)
+	if err = json.Unmarshal(respBody, &response); err != nil {
+		return nil, fmt.Errorf("error Unmarshal response: %v", err)
 	}
 
 	return &response, nil
@@ -73,13 +74,15 @@ func (p2p *P2P) GetP2PTransaction(ctx context.Context, transactionID string) (*P
 	}
 	defer resp.Body.Close()
 
+	respBody, err := io.ReadAll(resp.Body)
+
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response code: %v", resp.StatusCode)
+		return nil, fmt.Errorf("received non-200 response code: %v, reason: %s", resp.StatusCode, string(respBody))
 	}
 
 	var response P2PTransactionResponse
-	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, fmt.Errorf("error decoding response: %v", err)
+	if err = json.Unmarshal(respBody, &response); err != nil {
+		return nil, fmt.Errorf("error Unmarshal response: %v", err)
 	}
 
 	return &response, nil
@@ -137,7 +140,7 @@ func (p2p *P2P) CreateP2PDispute(ctx context.Context, req P2PDisputeRequest) (*P
 	}
 	var response P2PDisputeResponse
 	if err = json.Unmarshal(respBody, &response); err != nil {
-		return nil, fmt.Errorf("error decoding response: %v", err)
+		return nil, fmt.Errorf("error Unmarshal response: %v", err)
 	}
 
 	return &response, nil

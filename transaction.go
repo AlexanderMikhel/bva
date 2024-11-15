@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"net/http"
 )
 
@@ -39,13 +40,15 @@ func (mt *MassTransaction) CreateMassTransaction(ctx context.Context, req MassTr
 	}
 	defer resp.Body.Close()
 
+	respBody, err := io.ReadAll(resp.Body)
+
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("mass_transactions api return error with code: %v", resp.StatusCode)
+		return nil, fmt.Errorf("received non-200 response code: %v, reason: %s", resp.StatusCode, string(respBody))
 	}
 
 	var response MassTransactionResponse
-	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, fmt.Errorf("error decoding response: %v", err)
+	if err = json.Unmarshal(respBody, &response); err != nil {
+		return nil, fmt.Errorf("error Unmarshal response: %v", err)
 	}
 
 	return &response, nil
@@ -65,13 +68,15 @@ func (mt *MassTransaction) GetMassTransaction(ctx context.Context, transactionID
 	}
 	defer resp.Body.Close()
 
+	respBody, err := io.ReadAll(resp.Body)
+
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response code: %v", resp.StatusCode)
+		return nil, fmt.Errorf("received non-200 response code: %v, reason: %s", resp.StatusCode, string(respBody))
 	}
 
 	var response MassTransactionResponse
-	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
-		return nil, fmt.Errorf("error decoding response: %v", err)
+	if err = json.Unmarshal(respBody, &response); err != nil {
+		return nil, fmt.Errorf("error Unmarshal response: %v", err)
 	}
 
 	return &response, nil
