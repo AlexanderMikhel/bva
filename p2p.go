@@ -131,7 +131,7 @@ func (p2p *P2P) CreateP2PDispute(ctx context.Context, req P2PDisputeRequest) (*P
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response code: %v, reason: %v", resp.StatusCode, resp.Body)
+		return nil, fmt.Errorf("received non-200 response code: %v, reason: %s", resp.StatusCode, resp.Body)
 	}
 
 	var response P2PDisputeResponse
