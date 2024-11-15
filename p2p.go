@@ -130,12 +130,13 @@ func (p2p *P2P) CreateP2PDispute(ctx context.Context, req P2PDisputeRequest) (*P
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("received non-200 response code: %v, reason: %s", resp.StatusCode, resp.Body)
-	}
+	respBody, err := io.ReadAll(resp.Body)
 
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("received non-200 response code: %v, reason: %s", resp.StatusCode, string(respBody))
+	}
 	var response P2PDisputeResponse
-	if err = json.NewDecoder(resp.Body).Decode(&response); err != nil {
+	if err = json.Unmarshal(respBody, &response); err != nil {
 		return nil, fmt.Errorf("error decoding response: %v", err)
 	}
 
