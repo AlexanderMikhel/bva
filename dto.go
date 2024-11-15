@@ -2,7 +2,6 @@ package bovasdk
 
 import (
 	"mime/multipart"
-	"time"
 )
 
 // P2PTransactionRequest представляет тело запроса для создания P2P транзакции.
@@ -127,34 +126,34 @@ func (p *P2PDisputeRequest) WithProofImage2(fileNameWithFormat string, file mult
 // P2PDisputeResponse представляет тело ответа API для создания диспута по p2p транзакции.
 type P2PDisputeResponse struct {
 	Data struct {
-		ID          int       `json:"id"`
-		State       string    `json:"state"`
-		Repeated    bool      `json:"repeated"`
-		UpdatedAt   time.Time `json:"updated_at"`
-		CreatedAt   time.Time `json:"created_at"`
-		ProofImage  string    `json:"proof_image"`
-		ProofImage2 string    `json:"proof_image2"`
-		Amount      int       `json:"amount"`
+		ID          int    `json:"id"`
+		State       string `json:"state"`
+		Repeated    bool   `json:"repeated"`
+		UpdatedAt   string `json:"updated_at"`
+		CreatedAt   string `json:"created_at"`
+		ProofImage  string `json:"proof_image"`
+		ProofImage2 string `json:"proof_image2"`
+		Amount      int    `json:"amount"`
 		P2PTx       struct {
-			ID               string     `json:"id"`
-			MerchantID       string     `json:"merchant_id"`
-			Currency         string     `json:"currency"`
-			ToCurrency       *string    `json:"to_currency"`
-			State            string     `json:"state"`
-			CreatedAt        time.Time  `json:"created_at"`
-			UpdatedAt        time.Time  `json:"updated_at"`
-			CloseAt          *time.Time `json:"close_at"`
-			RedirectURL      *string    `json:"redirect_url"`
-			Email            *string    `json:"email"`
-			CustomerName     *string    `json:"customer_name"`
-			Rate             string     `json:"rate"`
-			Amount           string     `json:"amount"`
-			FiatAmount       string     `json:"fiat_amount"`
-			OldFiatAmount    string     `json:"old_fiat_amount"`
-			PaymentMethod    string     `json:"payment_method"`
-			PayeerBankName   string     `json:"payeer_bank_name"`
-			Comment          string     `json:"comment"`
-			AntifraudVerdict *string    `json:"antifraud_verdict"`
+			ID               string `json:"id"`
+			MerchantID       string `json:"merchant_id"`
+			Currency         string `json:"currency"`
+			ToCurrency       string `json:"to_currency"`
+			State            string `json:"state"`
+			CreatedAt        string `json:"created_at"`
+			UpdatedAt        string `json:"updated_at"`
+			CloseAt          string `json:"close_at"`
+			RedirectURL      string `json:"redirect_url"`
+			Email            string `json:"email"`
+			CustomerName     string `json:"customer_name"`
+			Rate             string `json:"rate"`
+			Amount           string `json:"amount"`
+			FiatAmount       string `json:"fiat_amount"`
+			OldFiatAmount    string `json:"old_fiat_amount"`
+			PaymentMethod    string `json:"payment_method"`
+			PayeerBankName   string `json:"payeer_bank_name"`
+			Comment          string `json:"comment"`
+			AntifraudVerdict string `json:"antifraud_verdict"`
 			Requisities      struct {
 				Number        string                 `json:"number"`
 				CardHolder    string                 `json:"card_holder"`
@@ -163,10 +162,10 @@ type P2PDisputeResponse struct {
 				BankColors    map[string]interface{} `json:"bank_colors"`
 				Brand         string                 `json:"brand"`
 				PaymentMethod string                 `json:"payment_method"`
-				UpdatedAt     time.Time              `json:"updated_at"`
-				CreatedAt     time.Time              `json:"created_at"`
+				UpdatedAt     string                 `json:"updated_at"`
+				CreatedAt     string                 `json:"created_at"`
 				ID            string                 `json:"id"`
-				SberpayURL    *string                `json:"sberpay_url"`
+				SberpayURL    string                 `json:"sberpay_url"`
 			} `json:"requisities"`
 		} `json:"p2p_tx"`
 	} `json:"data"`
